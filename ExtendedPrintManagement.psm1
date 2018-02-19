@@ -30,25 +30,25 @@
 
    This cmdlet does not support any wildcards.
    "*" for -PrinterName parameter is used to get all local printers from computer.
-   Time must be entered in ISP 8601 standard.
+   Time must be entered in ISO 8601 standard.
 .FUNCTIONALITY
    Sets printer availability
 #>
-function Set-PrinterAvailability
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-PrinterAvailability {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -56,110 +56,95 @@ function Set-PrinterAvailability
         $PrinterName,
 
         # Specifies availability start time value. Valid range 0000-2359.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
-        [ValidateRange(0000,2359)]
-        [ValidateLength(4,4)]
+        [ValidateRange(0000, 2359)]
+        [ValidateLength(4, 4)]
         [Alias("st")]
         [string]
         $StartTime,
 
         # Specifies availability end time value. Valid range 0000-2359.
-        [Parameter(Mandatory=$true,
-                   Position=2,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 2,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
-        [ValidateRange(0000,2359)]
-        [ValidateLength(4,4)]
+        [ValidateRange(0000, 2359)]
+        [ValidateLength(4, 4)]
         [Alias("ut")]
         [string]
         $UntilTime,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $StartTimeInput="********00.000000+000"
-                $UntilTimeInput="********00.000000+000"
-                $StartTimeInput = $StartTimeInput.Insert(8,$StartTime)
-                $UntilTimeInput = $UntilTimeInput.Insert(8,$UntilTime)
-                $temp = Set-WmiInstance -Path "$Path" -argument @{StartTime="$StartTimeInput"}
-                $temp = Set-WmiInstance -Path "$Path" -argument @{UntilTime="$UntilTimeInput"}
-                if($ShowProgress)
-                {
+                $StartTimeInput = "********00.000000+000"
+                $UntilTimeInput = "********00.000000+000"
+                $StartTimeInput = $StartTimeInput.Insert(8, $StartTime)
+                $UntilTimeInput = $UntilTimeInput.Insert(8, $UntilTime)
+                $temp = Set-WmiInstance -Path "$Path" -argument @{StartTime = "$StartTimeInput"}
+                $temp = Set-WmiInstance -Path "$Path" -argument @{UntilTime = "$UntilTimeInput"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $StartTimeInput="********00.000000+000"
-                        $UntilTimeInput="********00.000000+000"
-                        $StartTimeInput = $StartTimeInput.Insert(8,$StartTime)
-                        $UntilTimeInput = $UntilTimeInput.Insert(8,$UntilTime)
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{StartTime="$StartTimeInput"}
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{UntilTime="$UntilTimeInput"}
-                        if($ShowProgress)
-                        {
+                        $StartTimeInput = "********00.000000+000"
+                        $UntilTimeInput = "********00.000000+000"
+                        $StartTimeInput = $StartTimeInput.Insert(8, $StartTime)
+                        $UntilTimeInput = $UntilTimeInput.Insert(8, $UntilTime)
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{StartTime = "$StartTimeInput"}
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{UntilTime = "$UntilTimeInput"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                                 
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-                else
-                {
-                    if($ShowProgress)
-                    {
+                else {
+                    if ($ShowProgress) {
                         Write-Message -Computer $Computer
                     }
                 }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -198,21 +183,21 @@ function Set-PrinterAvailability
 .FUNCTIONALITY
    Sets "Print Spooled Documents First" option on printer.
 #>
-function Set-PrintSpooledFirst
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-PrintSpooledFirst {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -220,9 +205,9 @@ function Set-PrintSpooledFirst
         $PrinterName,
 
         # Specifies desired state of printer option.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet("True", "False")]
         [Alias("en")]
@@ -230,77 +215,62 @@ function Set-PrintSpooledFirst
         $SetActive,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output.
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName            
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $temp = Set-WmiInstance -Path "$Path" -argument @{DoCompleteFirst="$SetActive"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{DoCompleteFirst = "$SetActive"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{DoCompleteFirst="$SetActive"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{DoCompleteFirst = "$SetActive"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Message -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Message -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -340,21 +310,21 @@ function Set-PrintSpooledFirst
 .FUNCTIONALITY
    Sets "Print directly to the printer" option on a printer.
 #>
-function Set-PrintDirectly
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-PrintDirectly {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -362,9 +332,9 @@ function Set-PrintDirectly
         $PrinterName,
 
         # Specifies desired state of printer option.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet("True", "False")]
         [Alias("en")]
@@ -372,81 +342,66 @@ function Set-PrintDirectly
         $SetActive,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
                 #Queued property must be set to "False" so that Direct property can accept value "True"
-                $temp = Set-WmiInstance -Path "$Path" -argument @{Queued="False"}
-                $temp = Set-WmiInstance -Path "$Path" -argument @{Direct="$SetActive"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{Queued = "False"}
+                $temp = Set-WmiInstance -Path "$Path" -argument @{Direct = "$SetActive"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
                         #Queued property must be set to "False" so that Direct property can accept value "True"
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{Queued="False"}
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{Direct="$SetActive"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{Queued = "False"}
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{Direct = "$SetActive"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Message -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Message -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -485,21 +440,21 @@ function Set-PrintDirectly
 .FUNCTIONALITY
    Sets "Keep printed documents" option on a printer.
 #>
-function Set-KeepDocuments
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-KeepDocuments {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -507,9 +462,9 @@ function Set-KeepDocuments
         $PrinterName,
 
         # Specifies desired state of printer option.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet("True", "False")]
         [Alias("en")]
@@ -517,77 +472,62 @@ function Set-KeepDocuments
         $SetActive,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $temp = Set-WmiInstance -Path "$Path" -argument @{KeepPrintedJobs="$SetActive"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{KeepPrintedJobs = "$SetActive"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{KeepPrintedJobs="$SetActive"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{KeepPrintedJobs = "$SetActive"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Output -Computer $Computer
-		            }
-	            }
-             }
+                else {
+                    if ($ShowProgress) {
+                        Write-Output -Computer $Computer
+                    }
+                }
+            }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -605,7 +545,7 @@ function Set-KeepDocuments
 .EXAMPLE
    (Get-Printer -Name HP*).Name | Set-AdvancedPrintingFeatures -SetActive "True" -ShowProgress
 
-   This set of commands activates option on the local computer for all printers whose name starts with "HP".
+   This set of commands activates option on the local computer for all printers that name starts with "HP".
 .EXAMPLE
     Set-AdvancedPrintingFeatures -PrinterName * -SetActive "True" -ComputerName "Remote_Computer" -ShowProgress
 
@@ -626,21 +566,21 @@ function Set-KeepDocuments
 .FUNCTIONALITY
    Sets "Enable advanced printing features" option on a printer.
 #>
-function Set-AdvancedPrintingFeatures
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-AdvancedPrintingFeatures {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -648,9 +588,9 @@ function Set-AdvancedPrintingFeatures
         $PrinterName,
 
         # Specifies desired state of printer option.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet("True", "False")]
         [Alias("en")]
@@ -658,85 +598,68 @@ function Set-AdvancedPrintingFeatures
         $SetActive,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
-        If($SetActive -eq "True")
-        {
-            $SetActive="False"
+        If ($SetActive -eq "True") {
+            $SetActive = "False"
         }
-        else
-        {
-            $SetActive="True"
+        else {
+            $SetActive = "True"
         }
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $temp = Set-WmiInstance -Path "$Path" -argument @{RawOnly="$SetActive"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{RawOnly = "$SetActive"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{RawOnly="$SetActive"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{RawOnly = "$SetActive"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Output -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Output -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -775,21 +698,21 @@ function Set-AdvancedPrintingFeatures
 .FUNCTIONALITY
    Sets "Enable bidirectional support" option on a printer.
 #>
-function Set-EnableBidiSupport
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-EnableBidiSupport {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -797,9 +720,9 @@ function Set-EnableBidiSupport
         $PrinterName,
 
         # Specifies desired state of printer option.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet("True", "False")]
         [Alias("en")]
@@ -807,77 +730,62 @@ function Set-EnableBidiSupport
         $SetActive,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $temp = Set-WmiInstance -Path "$Path" -argument @{EnableBIDI="$SetActive"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{EnableBIDI = "$SetActive"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{EnableBIDI="$SetActive"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{EnableBIDI = "$SetActive"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Output -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Output -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -917,21 +825,21 @@ function Set-EnableBidiSupport
 .FUNCTIONALITY
    Sets "List in the directory" option on a printer.
 #>
-function Set-ListInDirectory
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-ListInDirectory {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -939,9 +847,9 @@ function Set-ListInDirectory
         $PrinterName,
 
         # Specifies desired state of printer option.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet("True", "False")]
         [Alias("en")]
@@ -949,77 +857,62 @@ function Set-ListInDirectory
         $SetActive,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $temp = Set-WmiInstance -Path "$Path" -argument @{Published="$SetActive"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{Published = "$SetActive"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{Published="$SetActive"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{Published = "$SetActive"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Output -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Output -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -1060,21 +953,21 @@ function Set-ListInDirectory
 .FUNCTIONALITY
    Sets behaviour of spooled documents on a printer queue.
 #>
-function Set-SpoolPrintDocuments
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-SpoolPrintDocuments {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -1082,9 +975,9 @@ function Set-SpoolPrintDocuments
         $PrinterName,
 
         # Specifies desired state of printer option.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [ValidateSet("Start_Printing_After_Last_Page", "Start_Printing_Immediately")]
         [Alias("so")]
@@ -1092,91 +985,72 @@ function Set-SpoolPrintDocuments
         $SelectOption,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                If($SelectOption -eq "Start_Printing_After_Last_Page")
-                {
-                    $temp = Set-WmiInstance -Path "$Path" -argument @{Queued="True"}
+                If ($SelectOption -eq "Start_Printing_After_Last_Page") {
+                    $temp = Set-WmiInstance -Path "$Path" -argument @{Queued = "True"}
                 }
-                else
-                {
-                    $temp = Set-WmiInstance -Path "$Path" -argument @{Queued="False"}
+                else {
+                    $temp = Set-WmiInstance -Path "$Path" -argument @{Queued = "False"}
                 }
-                if($ShowProgress)
-                {
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        If($SelectOption -eq "Start_Printing_After_Last_Page")
-                        {
-                            $temp = Set-WmiInstance -Path "$Path" -argument @{Queued="True"}
+                        If ($SelectOption -eq "Start_Printing_After_Last_Page") {
+                            $temp = Set-WmiInstance -Path "$Path" -argument @{Queued = "True"}
                         }
-                        else
-                        {
-                            $temp = Set-WmiInstance -Path "$Path" -argument @{Queued="False"}
+                        else {
+                            $temp = Set-WmiInstance -Path "$Path" -argument @{Queued = "False"}
                         }
-                        if($ShowProgress)
-                        {
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Message -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Message -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -1215,21 +1089,21 @@ function Set-SpoolPrintDocuments
 .FUNCTIONALITY
    Sets priority on a printer queue.
 #>
-function Set-PrinterPriority
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-PrinterPriority {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -1237,87 +1111,72 @@ function Set-PrinterPriority
         $PrinterName,
 
         # Specifies printer priority under load. Valid range 1-99.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
-        [ValidateRange(1,99)]
+        [ValidateRange(1, 99)]
         [Alias("pr")]
         [string]
         $Priority,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $temp = Set-WmiInstance -Path "$Path" -argument @{Priority="$Priority"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{Priority = "$Priority"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{Priority="$Priority"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{Priority = "$Priority"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    $PrinterName=$OriginalPrinterName
+                    $PrinterName = $OriginalPrinterName
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Message -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Message -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -1364,21 +1223,21 @@ function Set-PrinterPriority
 .FUNCTIONALITY
    Sets location on a printer queue.
 #>
-function Set-PrinterLocation
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-PrinterLocation {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement', 
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/",
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -1386,91 +1245,75 @@ function Set-PrinterLocation
         $PrinterName,
 
         # Specifies location which will be set on printer queue.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [Alias("lo")]
         [string]
         $Location,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        $SwitchTag=$false
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        $SwitchTag = $false
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $temp = Set-WmiInstance -Path "$Path" -argument @{Location="$Location"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{Location = "$Location"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
-                        $SwitchTag=$true
+                        $SwitchTag = $true
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{Location="$Location"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{Location = "$Location"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    if($SwitchTag)
-                    {
-                    $PrinterName=$OriginalPrinterName
+                    if ($SwitchTag) {
+                        $PrinterName = $OriginalPrinterName
                     }
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Message -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Message -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -1509,21 +1352,21 @@ function Set-PrinterLocation
 .FUNCTIONALITY
    Sets comment on a printer queue.
 #>
-function Set-PrinterComment
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Set-PrinterComment {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer on which to set information.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("pn")]
@@ -1531,91 +1374,75 @@ function Set-PrinterComment
         $PrinterName,
 
         # Specifies the comment that will be set on printer queue.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [Alias("cm")]
         [string]
         $Comment,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($PrinterName -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($PrinterName -eq "*") {
                 $PrinterName = Get-PrinterName
             }
-            foreach($Printer in $PrinterName)
-            {
+            foreach ($Printer in $PrinterName) {
                 $Path = Get-PrinterObject $Printer
-                $temp = Set-WmiInstance -Path "$Path" -argument @{Comment="$Comment"}
-                if($ShowProgress)
-                {
+                $temp = Set-WmiInstance -Path "$Path" -argument @{Comment = "$Comment"}
+                if ($ShowProgress) {
                     Write-Message -Printer $Printer
                 }
             }
         }
-        else
-        {
-            $SwitchTag=$false
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            $SwitchTag = $false
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($PrinterName -eq "*")
-                    {
-                        $OriginalPrinterName=$PrinterName
+                if ($TestCon) {
+                    If ($PrinterName -eq "*") {
+                        $OriginalPrinterName = $PrinterName
                         $PrinterName = Get-PrinterName $Computer
-                        $SwitchTag=$true
+                        $SwitchTag = $true
                     }
-                    foreach($Printer in $PrinterName)
-                    {
+                    foreach ($Printer in $PrinterName) {
                         $Path = Get-PrinterObject $Printer $Computer
-                        $temp = Set-WmiInstance -Path "$Path" -argument @{Comment="$Comment"}
-                        if($ShowProgress)
-                        {
+                        $temp = Set-WmiInstance -Path "$Path" -argument @{Comment = "$Comment"}
+                        if ($ShowProgress) {
                             Write-Message -Printer $Printer -Computer $Computer
                         }
                     }
-                    if($SwitchTag)
-                    {
-                    $PrinterName=$OriginalPrinterName
+                    if ($SwitchTag) {
+                        $PrinterName = $OriginalPrinterName
                     }
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Message -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Message -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -1654,21 +1481,21 @@ function Set-PrinterComment
 .FUNCTIONALITY
    Copies settings from one printer to other.
 #>
-function Copy-PrinterSettings
-{
-    [CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Copy-PrinterSettings {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/", 
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the name of the printer from which to take settings.
-        [Parameter(Mandatory=$true, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [Alias("sp")]
@@ -1676,92 +1503,75 @@ function Copy-PrinterSettings
         $SourcePrinter,
 
         # Specifies the name of the printer on which settings will be set.
-        [Parameter(Mandatory=$true,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $true,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [ValidateNotNullOrEmpty()]
         [Alias("tp")]
         [string[]]
         $TargetPrinter,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
-            If($TargetPrinter -eq "*")
-            {
+    Process {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
+            If ($TargetPrinter -eq "*") {
                 $TargetPrinter = Get-PrinterName
             }
-            foreach($Printer in $TargetPrinter)
-            {
-                if($Printer -ne $SourcePrinter)
-                {
+            foreach ($Printer in $TargetPrinter) {
+                if ($Printer -ne $SourcePrinter) {
                     $Path = Get-PrinterObject $Printer
                     $temp = Copy-Settings -SetPrinter $Path -SourcePrinter $SourcePrinter
-                    if($ShowProgress)
-                    {
+                    if ($ShowProgress) {
                         Write-Message -Printer $Printer
                     }
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
-                    If($TargetPrinter -eq "*")
-                    {
-                        $OriginalTargetPrinter=$TargetPrinter
+                if ($TestCon) {
+                    If ($TargetPrinter -eq "*") {
+                        $OriginalTargetPrinter = $TargetPrinter
                         $TargetPrinter = Get-PrinterName $Computer
                     }
-                    foreach($Printer in $TargetPrinter)
-                    {
-                        if($Printer -ne $SourcePrinter)
-                        {
+                    foreach ($Printer in $TargetPrinter) {
+                        if ($Printer -ne $SourcePrinter) {
                             $Path = Get-PrinterObject $Printer $Computer
                             $temp = Copy-Settings -SetPrinter $Path -SourcePrinter $SourcePrinter
-                            if($ShowProgress)
-                            {
+                            if ($ShowProgress) {
                                 Write-Message -Printer $Printer -Computer $Computer
                             }
                         }
                     }
-                    $TargetPrinter=$OriginalTargetPrinter
+                    $TargetPrinter = $OriginalTargetPrinter
                 }
-	            else
-	            {
-		            if($ShowProgress)
-		            {
-			            Write-Message -Computer $Computer
-		            }
-	            }
+                else {
+                    if ($ShowProgress) {
+                        Write-Message -Computer $Computer
+                    }
+                }
             }
         }
     }
-    End
-    {
+    End {
     }
 }
 
@@ -1820,187 +1630,163 @@ function Copy-PrinterSettings
 .FUNCTIONALITY
    Creating new network printer based on provided information
 #>
-function Add-NetworkPrinter
-{
-[CmdletBinding(DefaultParameterSetName='ExtendedPrintManagement', 
-                  SupportsShouldProcess=$true, 
-                  PositionalBinding=$false,
-                  ConfirmImpact='Medium')]
+function Add-NetworkPrinter {
+    [CmdletBinding(DefaultParameterSetName = 'ExtendedPrintManagement',
+        HelpURI = "https://ventrisbm.github.io/Extended-Print-Management/",
+        SupportsShouldProcess = $true, 
+        PositionalBinding = $false,
+        ConfirmImpact = 'Medium')]
     Param
     (
         # Specifies the IP address for creating TCP/IP printer port.
-        [Parameter(Mandatory=$False, 
-                   ValueFromPipeline=$true,
-                   ValueFromPipelineByPropertyName=$true, 
-                   ValueFromRemainingArguments=$false, 
-                   Position=0,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False, 
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true, 
+            ValueFromRemainingArguments = $false, 
+            Position = 0,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("ip")]
         [string[]]
         $PrinterIPAddress,
 
         # Specifies the name for printer which will be created.
-        [Parameter(Mandatory=$False,
-                   Position=1,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 1,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("pn")]
         [string[]]
         $PrinterName,
 
         # Specifies shared name for printer which will be created.
-        [Parameter(Mandatory=$False,
-                   Position=2,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 2,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("sn")]
         [string[]]
         $SharedName,
 
         # Specifies print driver that will be used for creating printer.
-        [Parameter(Mandatory=$False,
-                   Position=3,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 3,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("du")]
         [string[]]
         $DriverUsed,
 
         # Specifies location that will be set on created printer.
-        [Parameter(Mandatory=$False,
-                   Position=4,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 4,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("loc")]
         [string[]]
         $Location,
 
         # Specifies comment that will be set on created printer.
-        [Parameter(Mandatory=$False,
-                   Position=5,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 5,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("com")]
         [string[]]
         $Comment,
 
-         # Specifies path to CSV file.
-        [Parameter(Mandatory=$False,
-                   Position=6,
-                   ParameterSetName='ExtendedPrintManagement')]
+        # Specifies path to CSV file.
+        [Parameter(Mandatory = $False,
+            Position = 6,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("csv")]
         [string]
         $CsvPath,
 
         # Specifies the target computer for the management operation. Enter a fully qualified domain name, a NetBIOS name, or an IP address.
-        [Parameter(Mandatory=$False,
-                   Position=7,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            Position = 7,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [Alias("cn")]
         [string[]]
         $ComputerName,
 
         # Shows progress of cmdlet to console output
-        [Parameter(Mandatory=$False,
-                   ParameterSetName='ExtendedPrintManagement')]
+        [Parameter(Mandatory = $False,
+            ParameterSetName = 'ExtendedPrintManagement')]
         [switch]
         $ShowProgress
     )
 
-    Begin
-    {
+    Begin {
         . $PSScriptRoot\PSLibrary.ps1
     }
-    Process
-    {
+    Process {
         $sw = [Diagnostics.Stopwatch]::StartNew()
         $PrinterList = Import-Csv $CsvPath
-        if([string]::IsNullOrEmpty($ComputerName))
-        {
+        if ([string]::IsNullOrEmpty($ComputerName)) {
             $DriverList = Get-PrintDriverName
-            foreach($printer in $PrinterList)
-            {
-                if($DriverList -contains $printer.DriverUsed)
-                {
+            foreach ($printer in $PrinterList) {
+                if ($DriverList -contains $printer.DriverUsed) {
                     Add-PrinterPort -Name $printer.PrinterIPAddress -PrinterHostAddress $printer.PrinterIPAddress
-                    if([string]::IsNullOrEmpty($printer.SharedName))
-                    {
-                    Add-Printer -Name $printer.PrinterName -PortName $printer.PrinterIPAddress -DriverName $printer.DriverUsed
+                    if ([string]::IsNullOrEmpty($printer.SharedName)) {
+                        Add-Printer -Name $printer.PrinterName -PortName $printer.PrinterIPAddress -DriverName $printer.DriverUsed
                     }
-                    else
-                    {
-                    Add-Printer -Name $printer.PrinterName -PortName $printer.PrinterIPAddress -DriverName $printer.DriverUsed -ShareName $printer.SharedName -Shared
+                    else {
+                        Add-Printer -Name $printer.PrinterName -PortName $printer.PrinterIPAddress -DriverName $printer.DriverUsed -ShareName $printer.SharedName -Shared
                     }
 
-                    if(![string]::IsNullOrEmpty($printer.Location))
-                    {
-                    Set-PrinterLocation -PrinterName $printer.PrinterName -Location $printer.Location
+                    if (![string]::IsNullOrEmpty($printer.Location)) {
+                        Set-PrinterLocation -PrinterName $printer.PrinterName -Location $printer.Location
                     }
 
-                    if(![string]::IsNullOrEmpty($printer.Comment))
-                    {
-                    Set-PrinterComment -PrinterName $printer.PrinterName -Comment $printer.Comment
+                    if (![string]::IsNullOrEmpty($printer.Comment)) {
+                        Set-PrinterComment -PrinterName $printer.PrinterName -Comment $printer.Comment
                     }
 
-                    if($ShowProgress)
-                    {
+                    if ($ShowProgress) {
                         Write-Message -Printer $Printer.PrinterName
                                 
                     }
                 }
-                else
-                {
+                else {
                     $DriverList
                     $printer.DriverUsed
-                    $Driver=$printer.DriverUsed
+                    $Driver = $printer.DriverUsed
                     Write-Output ("$Driver driver is not installed on this computer!!")
                 }
             }
         }
-        else
-        {
-            foreach($Computer in $ComputerName)
-            {
+        else {
+            foreach ($Computer in $ComputerName) {
                 $TestCon = Test-Con $Computer
-                if($TestCon)
-                {
+                if ($TestCon) {
                     $DriverList = Get-PrintDriverName -ComputerName $Computer
-                    foreach($printer in $PrinterList)
-                    {
-                        if($DriverList -contains $printer.DriverUsed)
-                        {
+                    foreach ($printer in $PrinterList) {
+                        if ($DriverList -contains $printer.DriverUsed) {
                             Add-PrinterPort -Name $printer.PrinterIPAddress -PrinterHostAddress $printer.PrinterIPAddress -ComputerName $Computer
-                            if([string]::IsNullOrEmpty($printer.SharedName))
-                            {
-                            Add-Printer -Name $printer.PrinterName -PortName $printer.PrinterIPAddress -DriverName $printer.DriverUsed -ComputerName $Computer
+                            if ([string]::IsNullOrEmpty($printer.SharedName)) {
+                                Add-Printer -Name $printer.PrinterName -PortName $printer.PrinterIPAddress -DriverName $printer.DriverUsed -ComputerName $Computer
                             }
-                            else
-                            {
-                            Add-Printer -Name $printer.PrinterName -PortName $printer.PrinterIPAddress -DriverName $printer.DriverUsed -ShareName $printer.SharedName -Shared -ComputerName $Computer
+                            else {
+                                Add-Printer -Name $printer.PrinterName -PortName $printer.PrinterIPAddress -DriverName $printer.DriverUsed -ShareName $printer.SharedName -Shared -ComputerName $Computer
                             }
 
-                            if(![string]::IsNullOrEmpty($printer.Location))
-                            {
-                            Set-PrinterLocation -PrinterName $printer.PrinterName -Location $printer.Location -ComputerName $Computer
+                            if (![string]::IsNullOrEmpty($printer.Location)) {
+                                Set-PrinterLocation -PrinterName $printer.PrinterName -Location $printer.Location -ComputerName $Computer
                             }
 
-                            if(![string]::IsNullOrEmpty($printer.Comment))
-                            {
-                            Set-PrinterComment -PrinterName $printer.PrinterName -Comment $printer.Comment -ComputerName $Computer
+                            if (![string]::IsNullOrEmpty($printer.Comment)) {
+                                Set-PrinterComment -PrinterName $printer.PrinterName -Comment $printer.Comment -ComputerName $Computer
                             }
 
-                            if($ShowProgress)
-                            {
+                            if ($ShowProgress) {
                                 Write-Message -Printer $Printer.PrinterName -Computer $Computer
                                 
                             }
                         }
-                        else
-                        {
-                            $Driver=$printer.DriverUsed
+                        else {
+                            $Driver = $printer.DriverUsed
                             Write-Output ("$Driver driver is not installed on computer $Computer!!")
                         }
                     }
                 }
-                else
-                {
-                    if($ShowProgress)
-                    {
+                else {
+                    if ($ShowProgress) {
                         Write-Message -Computer $Computer
                     }
                 }
@@ -2009,7 +1795,6 @@ function Add-NetworkPrinter
         $sw.Stop()
         $sw.Elapsed
     }
-    End
-    {
+    End {
     }
 }
