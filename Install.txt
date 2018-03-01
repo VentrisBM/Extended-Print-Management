@@ -1,0 +1,2 @@
+To install this module simply copy folder "ExtendedPrintManagement" to powershell module repository located at
+$Env:ProgramFiles\WindowsPowerShell\Modules\
