@@ -36,26 +36,24 @@ You can find out more about WMF [here](https://docs.microsoft.com/en-us/powershe
 
 All cmdlets accept objects and object attributes from pipe and none of them show any output by default, if you want to see cmdlet output use parameter _-ShowProgress_. Every cmdlet in this module have defined _CmdletBinding_ which means you can use [Common Parameters](https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_commonparameters?view=powershell-6) for every cmdlet.
 
-### Set-AdvancedPrintingFeatures
+
+
+## Set-AdvancedPrintingFeatures
 
 This cmdlet enables you to change state of _“Enable advanced printing features”_ option under _Advanced_ tab of printer driver.
 Please note that his cmdlet is not compatible with "Set-PrintDirectly" cmdlet.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-SetActive**
-Specifies desired state of print driver option.
+**-SetActive** Specifies desired state of print driver option.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-AdvancedPrintingFeatures -PrinterName "Test Printer" -SetActive "True" -ShowProgress
@@ -72,25 +70,23 @@ Set-AdvancedPrintingFeatures -PrinterName * -SetActive "True" -ComputerName "Rem
 ```
 This command would activate _advanced printing features_ on every print driver on remote computer.
 
-### Set-EnableBidiSupport
+
+
+## Set-EnableBidiSupport
 
 This cmdlet enables you to change state of _“Enable bidirectional support”_ option under _Ports_ tab of printer driver.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-SetActive**
-Specifies desired state of print driver option.
+**-SetActive** Specifies desired state of print driver option.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-EnableBidiSupport -PrinterName "Test Printer" -SetActive "True" -ShowProgress
@@ -107,26 +103,24 @@ Set-EnableBidiSupport -PrinterName * -SetActive "True" -ComputerName "Remote_Com
 ```
 This command would activate _bidirectional support_ on every print driver on remote computer.
 
-### Set-KeepDocuments
+
+
+## Set-KeepDocuments
 
 This cmdlet enables you to change state of _“Keep printed documents”_ option under _Advanced_ tab of printer driver.
 Please note that his cmdlet is not compatible with "Set-PrintDirectly" cmdlet.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-SetActive**
-Specifies desired state of print driver option.
+**-SetActive** Specifies desired state of print driver option.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-KeepDocuments -PrinterName "Test Printer" -SetActive "True" -ShowProgress
@@ -143,26 +137,24 @@ Set-KeepDocuments -PrinterName * -SetActive "True" -ComputerName "Remote_Compute
 ```
 This command would enable _keeping printed documents_ in print queue for every print driver on remote computer.
 
-### Set-ListInDirectory
+
+
+## Set-ListInDirectory
 
 This cmdlet enables you to change state of _“List in the directory”_ option under _Sharing_ tab of printer driver.
 Please note that this option is only available if print queue is already shared!!
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-SetActive**
-Specifies desired state of print driver option.
+**-SetActive** Specifies desired state of print driver option.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-ListInDirectory -PrinterName "Test Printer" -SetActive "True" -ShowProgress
@@ -179,26 +171,24 @@ Set-ListInDirectory -PrinterName * -SetActive "True" -ComputerName "Remote_Compu
 ```
 This command would list every printer on remote computer in active directory.
 
-### Set-PrintDirectly
+
+
+## Set-PrintDirectly
 
 This cmdlet enables you to change state of _“Print directly to the printer”_ option under _Advanced_ tab of printer driver.
 Please note that his cmdlet is not compatible with "Set-SpoolPrintDocuments" cmdlet.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-SetActive**
-Specifies desired state of print driver option.
+**-SetActive** Specifies desired state of print driver option.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-PrintDirectly -PrinterName "Test Printer" -SetActive "True" -ShowProgress
@@ -215,29 +205,26 @@ Set-PrintDirectly -PrinterName * -SetActive "True" -ComputerName "Remote_Compute
 ```
 This command would disable document spooling for every print driver on remote computer.
 
-### Set-PrinterAvailability
+
+
+## Set-PrinterAvailability
 
 This cmdlet enables you to set _“Printer Availability”_ option under _Advanced_ tab of printer driver.
 Please note that time must be entered in "military" format(ISO 8601 standard).
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-StartTime**
-Specifies availability start time value. Valid range 0000-2359.
+**-StartTime** Specifies availability start time value. Valid range 0000-2359.
 
-**-UntilTime**
-Specifies availability end time value. Valid range 0000-2359.
+**-UntilTime** Specifies availability end time value. Valid range 0000-2359.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-PrinterAvailability -PrinterName "Test Printer" -StartTime 0800 -UntilTime 2000 -ShowProgress
@@ -254,25 +241,23 @@ Set-PrinterAvailability -PrinterName * -StartTime 0800 -UntilTime 1630 -Computer
 ```
 This command would set availability for every print driver on remote computer. Printers would be available from 8:00AM to 4:30PM.
 
-### Set-PrinterComment
+
+
+## Set-PrinterComment
 
 This cmdlet enables you to set _“Comment”_ under _General_ tab of printer driver.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-Comment**
-Specifies the string that will be set as comment.
+**-Comment** Specifies the string that will be set as comment.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-PrinterComment -PrinterName "Test Printer" -Comment "This is a test printer" -ShowProgress
@@ -289,25 +274,23 @@ Set-PrinterComment -PrinterName * -Comment "This is a test printer on remote com
 ```
 This command would set comment for every print driver on remote computer.
 
-### Set-PrinterLocation
+
+
+## Set-PrinterLocation
 
 This cmdlet enables you to set _“Location”_ under _General_ tab of printer driver.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-Location**
-Specifies the string that will be set as location.
+**-Location** Specifies the string that will be set as location.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-PrinterLocation -PrinterName "Test Printer" -Location "Location 1" -ShowProgress
@@ -324,25 +307,23 @@ Set-PrinterLocation -PrinterName * -Location "Location 3" -ComputerName "Remote_
 ```
 This command would set location for every print driver on remote computer.
 
-### Set-PrinterPriority
+
+
+## Set-PrinterPriority
 
 This cmdlet enables you to set _“Print Priority”_ under _Advanced_ tab of printer driver.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-Priority**
-Specifies the integer value that will be used to set priority.
+**-Priority** Specifies the integer value that will be used to set priority.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
 Set-PrinterPriority -PrinterName "Test Printer" -Priority 5 -ShowProgress
@@ -359,26 +340,24 @@ Set-PrinterPriority -PrinterName * -Priority 5 -ComputerName "Remote_Computer" -
 ```
 This command would set print priority to 5 for every print driver on remote computer.
 
-### Set-PrintSpooledFirst
+
+
+## Set-PrintSpooledFirst
 
 This cmdlet enables you to set _“Print spooled documents first”_ under _Advanced_ tab of printer driver.
 Please note that his cmdlet is not compatible with "Set-PrintDirectly" cmdlet.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-SetActive**
-Specifies desired state of print driver option.
+**-SetActive** Specifies desired state of print driver option.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
  Set-PrintSpooledFirst -PrinterName "Test Printer" -SetActive "True" -ShowProgress
@@ -395,26 +374,24 @@ Set-PrintSpooledFirst -PrinterName * -SetActive "True" -ComputerName "Remote_Com
 ```
 This command would activate _“Print spooled documents first”_ option for every print driver on remote computer.
 
-### Set-SpoolPrintDocuments
+
+
+## Set-SpoolPrintDocuments
 
 This cmdlet enables you to define behaviour of spooled files under _Advanced_ tab of printer driver. Avaliable states are _"Start printing after last page is spooled"_ or _"Start printing immediately"_.
 Please note that his cmdlet is not compatible with "Set-PrintDirectly" cmdlet.
 
-##### Parameters
+#### Parameters
 
-**-PrinterName**
-Specifies the name of the printer on which to set information.
+**-PrinterName** Specifies the name of the printer on which to set information.
 
-**-SelectOption**
-Specifies desired state of printer option. Valid values are "Start_Printing_After_Last_Page" and "Start_Printing_Immediately"
+**-SelectOption** Specifies desired state of printer option. Valid values are "Start_Printing_After_Last_Page" and "Start_Printing_Immediately"
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
  Set-SpoolPrintDocuments -PrinterName "Test Printer" -SelectOption Start_Printing_After_Last_Page -ShowProgress
@@ -431,25 +408,23 @@ Set-SpoolPrintDocuments -PrinterName * -SelectOption Start_Printing_Immediately 
 ```
 This command would activate "Start printing immediately" option for every print driver on remote computer.
 
-### Copy-PrinterSettings
+
+
+## Copy-PrinterSettings
 
 This cmdlet enables you to copy printer driver settings that are covered with this module. 
 
-##### Parameters
+#### Parameters
 
-**-SourcePrinter**
-Specifies the name of the printer from which to take settings.
+**-SourcePrinter** Specifies the name of the printer from which to take settings.
 
-**-TargetPrinter**
-Specifies the name of the printer on which settings will be set.
+**-TargetPrinter** Specifies the name of the printer on which settings will be set.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
  Copy-PrinterSettings -SourcePrinter "HP" -TargetPrinter "Lexmark" -ShowProgress
@@ -466,7 +441,9 @@ Copy-PrinterSettings -SourcePrinter "HP" -TargetPrinter "*" -ComputerName "Remot
 ```
 This command would copy settings from printer queue "HP" to all other printer queues on remote computer.
 
-### Add-NetworkPrinter
+
+
+## Add-NetworkPrinter
 
 This cmdlet enables you to create new printers manually or by using printer list in CSV format.
 Please note that columns in CSV file become parameter for script and because of that they need to be named exactly like it is listed below.
@@ -485,36 +462,27 @@ To ensure right column naming copy next line in first row of you CSV file
     5. Location
     6. Comment
 
-##### Parameters
+#### Parameters
 
-**-PrinterIPAddress**
-Specifies the IP address for creating TCP/IP printer port.
+**-PrinterIPAddress** Specifies the IP address for creating TCP/IP printer port.
 
-**-PrinterName**
-Specifies the name for printer which will be created.
+**-PrinterName** Specifies the name for printer which will be created.
 
-**-SharedName**
-Specifies shared name for printer which will be created.
+**-SharedName** Specifies shared name for printer which will be created.
 
-**-DriverUsed**
-Specifies print driver name that will be used for creating printer.
+**-DriverUsed** Specifies print driver name that will be used for creating printer.
 
-**-Location**
-Specifies location that will be set on created printer.
+**-Location** Specifies location that will be set on created printer.
 
-**-Comment**
-Specifies comment that will be set on created printer.
+**-Comment** Specifies comment that will be set on created printer.
 
-**-CsvPath**
-Specifies path to CSV file for creating printers.
+**-CsvPath** Specifies path to CSV file for creating printers.
 
-**-ComputerName**
-Specifies the target computer for the management operation.
+**-ComputerName** Specifies the target computer for the management operation.
 
-**-ShowProgress**
-Shows progress of cmdlet to console output.
+**-ShowProgress** Shows progress of cmdlet to console output.
 
-##### Examples
+#### Examples
 
 ```powershell
  Add-NetworkPrinter -PrinterIPAddress 0.0.0.0 -PrinterName "Test Printer" -SharedName "TestP" -DriverUsed "Microsoft Print To PDF" -ShowProgress
@@ -535,6 +503,8 @@ This command would create all printers structured in CSV file on local computer.
 Add-NetworkPrinter -CsvPath "C:\PrinterList.csv" -ComputerName "Remote_Computer" -ShowProgress
 ```
 This command would create all printers structured in CSV file on remote computer.
+
+
 
 ## Change Log
 
